@@ -17,10 +17,16 @@ interface Property {
 
 export default function PropertyManager() {
   const [properties, setProperties] = useState<Property[]>([
-    { id: '1', title: 'Villa - Salmiya Beach', type: 'villa', location: 'Salmiya', size: 450, beds: 4, baths: 3, price: 850000, status: 'available', listingType: 'sale' },
-    { id: '2', title: 'Apartment - Zamalek', type: 'apartment', location: 'Zamalek', size: 180, beds: 3, baths: 2, price: 650000, status: 'available', listingType: 'sale' },
-    { id: '3', title: 'Land Plot - Jahra', type: 'land', location: 'Jahra', size: 800, beds: 0, baths: 0, price: 1200000, status: 'sold', listingType: 'sale' },
-    { id: '4', title: 'Commercial Space - Downtown', type: 'commercial', location: 'Downtown', size: 200, beds: 0, baths: 2, price: 125000, status: 'available', listingType: 'rent' },
+    { id: '1', title: 'Luxury Villa - Salmiya Waterfront', type: 'villa', location: 'Salmiya', size: 650, beds: 6, baths: 5, price: 2850000, status: 'available', listingType: 'sale' },
+    { id: '2', title: 'Premium Apartment - Zamalek Tower', type: 'apartment', location: 'Zamalek', size: 280, beds: 4, baths: 3, price: 1650000, status: 'available', listingType: 'sale' },
+    { id: '3', title: 'Commercial Land - Jahra Industrial', type: 'land', location: 'Jahra', size: 1200, beds: 0, baths: 0, price: 3200000, status: 'sold', listingType: 'sale' },
+    { id: '4', title: 'Business Hub - Downtown Kuwait', type: 'commercial', location: 'Downtown', size: 450, beds: 0, baths: 6, price: 2100000, status: 'available', listingType: 'rent' },
+    { id: '5', title: 'Modern Villa - Bayan Hills', type: 'villa', location: 'Bayan', size: 520, beds: 5, baths: 4, price: 1950000, status: 'available', listingType: 'sale' },
+    { id: '6', title: 'Executive Apartment - Salmiya', type: 'apartment', location: 'Salmiya', size: 220, beds: 3, baths: 2, price: 950000, status: 'rented', listingType: 'rent' },
+    { id: '7', title: 'Land Plot - Kaifan', type: 'land', location: 'Kaifan', size: 800, beds: 0, baths: 0, price: 1800000, status: 'available', listingType: 'sale' },
+    { id: '8', title: 'Retail Space - The Avenues', type: 'commercial', location: 'The Avenues', size: 300, beds: 0, baths: 3, price: 650000, status: 'sold', listingType: 'rent' },
+    { id: '9', title: 'Spacious Villa - Mishref', type: 'villa', location: 'Mishref', size: 480, beds: 4, baths: 3, price: 1650000, status: 'available', listingType: 'sale' },
+    { id: '10', title: 'Studio Apartment - Jaber Al-Ahmed', type: 'apartment', location: 'Jaber Al-Ahmed', size: 85, beds: 1, baths: 1, price: 380000, status: 'available', listingType: 'sale' },
   ]);
 
   const [showForm, setShowForm] = useState(false);

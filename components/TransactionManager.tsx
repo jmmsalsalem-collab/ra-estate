@@ -15,9 +15,16 @@ interface Transaction {
 
 export default function TransactionManager() {
   const [transactions, setTransactions] = useState<Transaction[]>([
-    { id: '1', propertyTitle: 'Villa - Salmiya Beach', clientName: 'Ahmed Al-Sabah', type: 'sale', amount: 850000, date: '2026-04-01', status: 'completed', commission: 42500 },
-    { id: '2', propertyTitle: 'Apartment - Zamalek', clientName: 'Fatima Al-Dossari', type: 'rent', amount: 125000, date: '2026-04-02', status: 'completed', commission: 6250 },
-    { id: '3', propertyTitle: 'Commercial Space - Downtown', clientName: 'Mohammed Al-Othman', type: 'rent', amount: 75000, date: '2026-04-03', status: 'pending', commission: 3750 },
+    { id: '1', propertyTitle: 'Luxury Villa - Salmiya Waterfront', clientName: 'Ahmed Al-Sabah', type: 'sale', amount: 2850000, date: '2026-03-28', status: 'completed', commission: 142500 },
+    { id: '2', propertyTitle: 'Premium Apartment - Zamalek Tower', clientName: 'Fatima Al-Dossari', type: 'rent', amount: 450000, date: '2026-03-29', status: 'completed', commission: 22500 },
+    { id: '3', propertyTitle: 'Business Hub - Downtown Kuwait', clientName: 'Mohammed Al-Othman', type: 'rent', amount: 750000, date: '2026-03-30', status: 'completed', commission: 37500 },
+    { id: '4', propertyTitle: 'Modern Villa - Bayan Hills', clientName: 'Layla Al-Rashid', type: 'sale', amount: 1950000, date: '2026-03-31', status: 'pending', commission: 97500 },
+    { id: '5', propertyTitle: 'Executive Apartment - Salmiya', clientName: 'Khalid Al-Enezi', type: 'rent', amount: 350000, date: '2026-04-01', status: 'completed', commission: 17500 },
+    { id: '6', propertyTitle: 'Land Plot - Kaifan', clientName: 'Ibrahim Al-Dawood', type: 'sale', amount: 1800000, date: '2026-04-02', status: 'pending', commission: 90000 },
+    { id: '7', propertyTitle: 'Retail Space - The Avenues', clientName: 'Sara Al-Aziz', type: 'rent', amount: 320000, date: '2026-04-03', status: 'completed', commission: 16000 },
+    { id: '8', propertyTitle: 'Spacious Villa - Mishref', clientName: 'Noor Al-Mutairi', type: 'sale', amount: 1650000, date: '2026-04-04', status: 'pending', commission: 82500 },
+    { id: '9', propertyTitle: 'Commercial Land - Jahra Industrial', clientName: 'Mohammed Al-Othman', type: 'sale', amount: 3200000, date: '2026-04-05', status: 'completed', commission: 160000 },
+    { id: '10', propertyTitle: 'Studio Apartment - Jaber Al-Ahmed', clientName: 'Layla Al-Rashid', type: 'sale', amount: 380000, date: '2026-04-05', status: 'pending', commission: 19000 },
   ]);
 
   const [showForm, setShowForm] = useState(false);

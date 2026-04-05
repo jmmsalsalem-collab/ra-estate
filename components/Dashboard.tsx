@@ -15,17 +15,19 @@ interface DashboardStats {
 
 export default function Dashboard() {
   const [stats, setStats] = useState<DashboardStats>({
-    totalProperties: 47,
-    availableProperties: 28,
-    soldProperties: 12,
-    rentedProperties: 7,
-    totalRevenueKwd: 4500000,
-    totalClientsKwd: 235000,
-    activeTransactions: 8,
+    totalProperties: 156,
+    availableProperties: 89,
+    soldProperties: 42,
+    rentedProperties: 25,
+    totalRevenueKwd: 28750000,
+    totalClientsKwd: 5420000,
+    activeTransactions: 23,
     topPropertiesByValue: [
-      { title: 'Villa - Salmiya', price: 850000 },
-      { title: 'Apartment - Zamalek', price: 650000 },
-      { title: 'Land - Jahra', price: 1200000 },
+      { title: 'Luxury Villa - Salmiya Waterfront', price: 2850000 },
+      { title: 'Premium Apartment - Zamalek Tower', price: 1650000 },
+      { title: 'Commercial Land Plot - Jahra Industrial', price: 3200000 },
+      { title: 'Modern Villa - Bayan Hills', price: 1950000 },
+      { title: 'Business Hub - Downtown Kuwait', price: 2100000 },
     ],
   });
 

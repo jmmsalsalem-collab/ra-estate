@@ -16,9 +16,14 @@ interface Client {
 
 export default function ClientManager() {
   const [clients, setClients] = useState<Client[]>([
-    { id: '1', name: 'Ahmed Al-Sabah', phone: '96599123456', email: 'ahmed@email.com', type: 'buyer', budgetMin: 500000, budgetMax: 1500000, preferredType: 'villa', status: 'active' },
-    { id: '2', name: 'Fatima Al-Dossari', phone: '96598765432', email: 'fatima@email.com', type: 'renter', budgetMin: 50000, budgetMax: 150000, preferredType: 'apartment', status: 'active' },
-    { id: '3', name: 'Mohammed Al-Othman', phone: '96597654321', email: 'mohammed@email.com', type: 'buyer', budgetMin: 800000, budgetMax: 2000000, preferredType: 'land', status: 'active' },
+    { id: '1', name: 'Ahmed Al-Sabah', phone: '96599123456', email: 'ahmed@email.com', type: 'buyer', budgetMin: 2000000, budgetMax: 3500000, preferredType: 'villa', status: 'active' },
+    { id: '2', name: 'Fatima Al-Dossari', phone: '96598765432', email: 'fatima@email.com', type: 'renter', budgetMin: 250000, budgetMax: 500000, preferredType: 'apartment', status: 'active' },
+    { id: '3', name: 'Mohammed Al-Othman', phone: '96597654321', email: 'mohammed@email.com', type: 'buyer', budgetMin: 2500000, budgetMax: 4000000, preferredType: 'land', status: 'active' },
+    { id: '4', name: 'Layla Al-Rashid', phone: '96599876543', email: 'layla@email.com', type: 'renter', budgetMin: 150000, budgetMax: 300000, preferredType: 'apartment', status: 'active' },
+    { id: '5', name: 'Khalid Al-Enezi', phone: '96598765432', email: 'khalid@email.com', type: 'buyer', budgetMin: 1500000, budgetMax: 2500000, preferredType: 'villa', status: 'active' },
+    { id: '6', name: 'Sara Al-Aziz', phone: '96599234567', email: 'sara@email.com', type: 'both', budgetMin: 800000, budgetMax: 1800000, preferredType: 'apartment', status: 'active' },
+    { id: '7', name: 'Ibrahim Al-Dawood', phone: '96597654098', email: 'ibrahim@email.com', type: 'buyer', budgetMin: 3000000, budgetMax: 5000000, preferredType: 'commercial', status: 'active' },
+    { id: '8', name: 'Noor Al-Mutairi', phone: '96599123789', email: 'noor@email.com', type: 'renter', budgetMin: 200000, budgetMax: 400000, preferredType: 'apartment', status: 'closed' },
   ]);
 
   const [showForm, setShowForm] = useState(false);
