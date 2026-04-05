@@ -80,9 +80,9 @@ export default function Dashboard() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Top KPIs */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           icon={Home}
           label="Total Properties"
@@ -114,7 +114,7 @@ export default function Dashboard() {
       </div>
 
       {/* Charts Row 1 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
         {/* Monthly Revenue Trend */}
         <div className="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-lg p-6">
           <h3 className="text-lg font-bold text-white mb-6">Monthly Revenue Trend</h3>
