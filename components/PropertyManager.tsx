@@ -1,46 +1,57 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Plus, Trash2, Edit2, Loader } from 'lucide-react';
 
 interface Property {
   id: string;
   title: string;
-  type: string;
+  property_type: string;
   location: string;
-  size: number;
-  beds: number;
-  baths: number;
-  price: number;
-  status: string;
-  listingType: string;
+  size_sqm: number;
+  bedrooms: number;
+  bathrooms: number;
+  price_kwd: number;
+  property_status: string;
+  listing_type: string;
+  created_at: string;
 }
 
 export default function PropertyManager() {
-  const [properties, setProperties] = useState<Property[]>([
-    { id: '1', title: 'Luxury Villa - Salmiya Waterfront', type: 'villa', location: 'Salmiya', size: 650, beds: 6, baths: 5, price: 2850000, status: 'available', listingType: 'sale' },
-    { id: '2', title: 'Premium Apartment - Zamalek Tower', type: 'apartment', location: 'Zamalek', size: 280, beds: 4, baths: 3, price: 1650000, status: 'available', listingType: 'sale' },
-    { id: '3', title: 'Commercial Land - Jahra Industrial', type: 'land', location: 'Jahra', size: 1200, beds: 0, baths: 0, price: 3200000, status: 'sold', listingType: 'sale' },
-    { id: '4', title: 'Business Hub - Downtown Kuwait', type: 'commercial', location: 'Downtown', size: 450, beds: 0, baths: 6, price: 2100000, status: 'available', listingType: 'rent' },
-    { id: '5', title: 'Modern Villa - Bayan Hills', type: 'villa', location: 'Bayan', size: 520, beds: 5, baths: 4, price: 1950000, status: 'available', listingType: 'sale' },
-    { id: '6', title: 'Executive Apartment - Salmiya', type: 'apartment', location: 'Salmiya', size: 220, beds: 3, baths: 2, price: 950000, status: 'rented', listingType: 'rent' },
-    { id: '7', title: 'Land Plot - Kaifan', type: 'land', location: 'Kaifan', size: 800, beds: 0, baths: 0, price: 1800000, status: 'available', listingType: 'sale' },
-    { id: '8', title: 'Retail Space - The Avenues', type: 'commercial', location: 'The Avenues', size: 300, beds: 0, baths: 3, price: 650000, status: 'sold', listingType: 'rent' },
-    { id: '9', title: 'Spacious Villa - Mishref', type: 'villa', location: 'Mishref', size: 480, beds: 4, baths: 3, price: 1650000, status: 'available', listingType: 'sale' },
-    { id: '10', title: 'Studio Apartment - Jaber Al-Ahmed', type: 'apartment', location: 'Jaber Al-Ahmed', size: 85, beds: 1, baths: 1, price: 380000, status: 'available', listingType: 'sale' },
-  ]);
-
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
-    type: 'apartment',
+    property_type: 'apartment',
     location: '',
-    size: 0,
-    beds: 0,
-    baths: 0,
-    price: 0,
-    status: 'available',
-    listingType: 'sale',
+    size_sqm: 0,
+    bedrooms: 0,
+    bathrooms: 0,
+    price_kwd: 0,
+    listing_type: 'sale',
   });
+
+  // Fetch properties on mount
+  useEffect(() => {
+    fetchProperties();
+  }, []);
+
+  const fetchProperties = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch('/api/properties');
+      if (!res.ok) throw new Error('Failed to fetch properties');
+      const data = await res.json();
+      setProperties(data);
+    } catch (error) {
+      console.error('Error fetching properties:', error);
+      alert('Failed to load properties');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const formatKwd = (value: number) => {
     return new Intl.NumberFormat('ar-KW', {
@@ -51,33 +62,52 @@ export default function PropertyManager() {
     }).format(value);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newProperty: Property = {
-      id: Date.now().toString(),
-      title: formData.title,
-      type: formData.type,
-      location: formData.location,
-      size: formData.size,
-      beds: formData.beds,
-      baths: formData.baths,
-      price: formData.price,
-      status: formData.status,
-      listingType: formData.listingType,
-    };
-    setProperties([...properties, newProperty]);
-    setFormData({
-      title: '',
-      type: 'apartment',
-      location: '',
-      size: 0,
-      beds: 0,
-      baths: 0,
-      price: 0,
-      status: 'available',
-      listingType: 'sale',
-    });
-    setShowForm(false);
+    try {
+      setSubmitting(true);
+      const res = await fetch('/api/properties', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) throw new Error('Failed to create property');
+      
+      await fetchProperties();
+      setFormData({
+        title: '',
+        property_type: 'apartment',
+        location: '',
+        size_sqm: 0,
+        bedrooms: 0,
+        bathrooms: 0,
+        price_kwd: 0,
+        listing_type: 'sale',
+      });
+      setShowForm(false);
+      alert('Property added successfully!');
+    } catch (error) {
+      console.error('Error creating property:', error);
+      alert('Failed to add property');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this property?')) return;
+    
+    try {
+      const res = await fetch(`/api/properties/${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Failed to delete property');
+      
+      await fetchProperties();
+      alert('Property deleted successfully!');
+    } catch (error) {
+      console.error('Error deleting property:', error);
+      alert('Failed to delete property');
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -99,9 +129,9 @@ export default function PropertyManager() {
         <h2 className="text-2xl font-bold text-white">Property Management</h2>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-6 py-2 rounded-lg hover:shadow-lg hover:shadow-blue-500/50 transition-all"
+          className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-6 py-2 rounded-lg hover:shadow-lg hover:shadow-blue-500/50 transition-all flex items-center gap-2"
         >
-          {showForm ? '✕ Cancel' : '+ Add Property'}
+          {showForm ? '✕ Cancel' : <Plus size={18} />} {showForm ? 'Cancel' : 'Add Property'}
         </button>
       </div>
 
@@ -118,8 +148,8 @@ export default function PropertyManager() {
                 className="bg-slate-800 border border-slate-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-blue-500"
               />
               <select
-                value={formData.type}
-                onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                value={formData.property_type}
+                onChange={(e) => setFormData({ ...formData, property_type: e.target.value })}
                 className="bg-slate-800 border border-slate-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-blue-500"
               >
                 <option value="villa">Villa</option>
@@ -138,36 +168,36 @@ export default function PropertyManager() {
               <input
                 type="number"
                 placeholder="Size (sqm)"
-                value={formData.size}
-                onChange={(e) => setFormData({ ...formData, size: Number(e.target.value) })}
+                value={formData.size_sqm}
+                onChange={(e) => setFormData({ ...formData, size_sqm: Number(e.target.value) })}
                 required
                 className="bg-slate-800 border border-slate-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-blue-500"
               />
               <input
                 type="number"
                 placeholder="Bedrooms"
-                value={formData.beds}
-                onChange={(e) => setFormData({ ...formData, beds: Number(e.target.value) })}
+                value={formData.bedrooms}
+                onChange={(e) => setFormData({ ...formData, bedrooms: Number(e.target.value) })}
                 className="bg-slate-800 border border-slate-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-blue-500"
               />
               <input
                 type="number"
                 placeholder="Bathrooms"
-                value={formData.baths}
-                onChange={(e) => setFormData({ ...formData, baths: Number(e.target.value) })}
+                value={formData.bathrooms}
+                onChange={(e) => setFormData({ ...formData, bathrooms: Number(e.target.value) })}
                 className="bg-slate-800 border border-slate-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-blue-500"
               />
               <input
                 type="number"
                 placeholder="Price (د.ك KWD)"
-                value={formData.price}
-                onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
+                value={formData.price_kwd}
+                onChange={(e) => setFormData({ ...formData, price_kwd: Number(e.target.value) })}
                 required
                 className="bg-slate-800 border border-slate-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-blue-500"
               />
               <select
-                value={formData.listingType}
-                onChange={(e) => setFormData({ ...formData, listingType: e.target.value })}
+                value={formData.listing_type}
+                onChange={(e) => setFormData({ ...formData, listing_type: e.target.value })}
                 className="bg-slate-800 border border-slate-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-blue-500"
               >
                 <option value="sale">For Sale</option>
@@ -176,62 +206,75 @@ export default function PropertyManager() {
             </div>
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-6 py-3 rounded-lg hover:shadow-lg hover:shadow-blue-500/50 transition-all font-medium"
+              disabled={submitting}
+              className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-6 py-3 rounded-lg hover:shadow-lg hover:shadow-blue-500/50 transition-all font-medium disabled:opacity-50"
             >
-              Add Property
+              {submitting ? 'Adding...' : 'Add Property'}
             </button>
           </form>
         </div>
       )}
 
       {/* Properties Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
-        {properties.map((prop) => (
-          <div key={prop.id} className="bg-slate-900/50 border border-slate-700/50 rounded-lg p-6 hover:border-blue-500/50 transition-all">
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <h3 className="text-lg font-bold text-white">{prop.title}</h3>
-                <p className="text-sm text-gray-400 mt-1">📍 {prop.location}</p>
+      {loading ? (
+        <div className="flex items-center justify-center py-12">
+          <Loader size={32} className="text-blue-400 animate-spin" />
+        </div>
+      ) : properties.length === 0 ? (
+        <div className="text-center py-12 text-gray-400">
+          <p>No properties yet. Create one to get started!</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+          {properties.map((prop) => (
+            <div key={prop.id} className="bg-slate-900/50 border border-slate-700/50 rounded-lg p-6 hover:border-blue-500/50 transition-all">
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold text-white">{prop.title}</h3>
+                  <p className="text-sm text-gray-400 mt-1">📍 {prop.location}</p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleDelete(prop.id)}
+                    className="p-2 hover:bg-red-500/20 rounded-lg transition-colors"
+                  >
+                    <Trash2 size={18} className="text-red-400" />
+                  </button>
+                </div>
               </div>
-              <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(prop.status)}`}>
-                {prop.status.toUpperCase()}
-              </span>
+
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(prop.property_status)}`}>
+                    {prop.property_status.toUpperCase()}
+                  </span>
+                  <span className="text-xs text-gray-500 capitalize">{prop.listing_type}</span>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2">
+                  <div>
+                    <p className="text-xs text-gray-500">Type</p>
+                    <p className="text-sm text-gray-200 capitalize">{prop.property_type}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500">Size</p>
+                    <p className="text-sm text-gray-200">{prop.size_sqm} sqm</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500">Beds</p>
+                    <p className="text-sm text-gray-200">{prop.bedrooms}</p>
+                  </div>
+                </div>
+
+                <div className="pt-3 border-t border-slate-700/50">
+                  <p className="text-2xl font-bold text-cyan-400">{formatKwd(prop.price_kwd)}</p>
+                  <p className="text-xs text-gray-500 mt-1">Added {new Date(prop.created_at).toLocaleDateString()}</p>
+                </div>
+              </div>
             </div>
-
-            <div className="space-y-3">
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <p className="text-xs text-gray-500">Type</p>
-                  <p className="text-sm text-gray-200 capitalize">{prop.type}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500">Listing</p>
-                  <p className="text-sm text-gray-200 capitalize">{prop.listingType}</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-2">
-                <div>
-                  <p className="text-xs text-gray-500">Size</p>
-                  <p className="text-sm text-gray-200">{prop.size} sqm</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500">Beds</p>
-                  <p className="text-sm text-gray-200">{prop.beds}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500">Baths</p>
-                  <p className="text-sm text-gray-200">{prop.baths}</p>
-                </div>
-              </div>
-
-              <div className="pt-3 border-t border-slate-700/50">
-                <p className="text-2xl font-bold text-cyan-400">{formatKwd(prop.price)}</p>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
