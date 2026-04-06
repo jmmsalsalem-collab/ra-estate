@@ -56,8 +56,8 @@ export default function HomePage() {
 
         {/* ═══ SIDEBAR (Desktop) ═══ */}
         <aside
-          style={{ width: sidebarOpen ? 240 : 64 }}
-          className="hidden lg:flex flex-col shrink-0 border-r border-white/[0.04] bg-[#060610] transition-all duration-300 ease-out h-screen sticky top-0"
+          style={{ width: sidebarOpen ? 240 : 64, minWidth: sidebarOpen ? 240 : 64 }}
+          className="desktop-sidebar flex-col shrink-0 border-r border-white/[0.04] bg-[#060610] transition-all duration-300 ease-out h-screen sticky top-0"
         >
           {/* Logo */}
           <div className="flex items-center gap-3 h-16 px-4 border-b border-white/[0.04] shrink-0">
@@ -129,8 +129,8 @@ export default function HomePage() {
         {/* ═══ MOBILE SIDEBAR ═══ */}
         {mobileMenuOpen && (
           <>
-            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 lg:hidden" onClick={() => setMobileMenuOpen(false)} />
-            <aside className="fixed inset-y-0 left-0 w-[260px] z-50 flex flex-col bg-[#060610] border-r border-white/[0.04] lg:hidden animate-slide-in-left">
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50" onClick={() => setMobileMenuOpen(false)} />
+            <aside className="fixed inset-y-0 left-0 w-[260px] z-50 flex flex-col bg-[#060610] border-r border-white/[0.04] animate-slide-in-left">
               <div className="flex items-center justify-between h-16 px-4 border-b border-white/[0.04]">
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#00d4ff] to-[#7c3aed] flex items-center justify-center shadow-[0_0_15px_rgba(0,212,255,0.15)]">
@@ -165,7 +165,7 @@ export default function HomePage() {
           {/* Top Bar */}
           <header className="sticky top-0 z-30 flex items-center justify-between h-16 px-6 lg:px-8 border-b border-white/[0.04] bg-[#050508]/85 backdrop-blur-2xl shrink-0">
             <div className="flex items-center gap-3">
-              <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden text-white/25 hover:text-white/50 p-1">
+              <button onClick={() => setMobileMenuOpen(true)} className="mobile-only text-white/25 hover:text-white/50 p-1">
                 <Menu size={20} />
               </button>
               <div>
@@ -179,7 +179,8 @@ export default function HomePage() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => { setCmdOpen(true); setCmdSearch(''); }}
-                className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.02] border border-white/[0.04] text-white/15 text-[11px] hover:border-white/[0.08] transition-all w-48"
+                className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.02] border border-white/[0.04] text-white/15 text-[11px] hover:border-white/[0.08] transition-all"
+              style={{ width: 192 }}
               >
                 <Search size={12} />
                 <span>Search...</span>
