@@ -1,256 +1,192 @@
 'use client';
 
 import { useState } from 'react';
+import { ToastProvider } from '@/components/Toast';
+import Dashboard from '@/components/Dashboard';
 import PropertyManager from '@/components/PropertyManager';
 import ClientManager from '@/components/ClientManager';
 import TransactionManager from '@/components/TransactionManager';
-import Dashboard from '@/components/Dashboard';
-import { LayoutGrid, Building2, Users, TrendingUp, LogOut, Menu, X } from 'lucide-react';
+import Analytics from '@/components/Analytics';
+import {
+  LayoutDashboard, Building2, Users, ArrowLeftRight, BarChart3, Settings,
+  Bell, Search, Menu, X, ChevronLeft, LogOut, Shield
+} from 'lucide-react';
+
+type Tab = 'dashboard' | 'properties' | 'clients' | 'transactions' | 'analytics' | 'settings';
+
+const navItems: { id: Tab; label: string; icon: typeof LayoutDashboard }[] = [
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { id: 'properties', label: 'Properties', icon: Building2 },
+  { id: 'clients', label: 'Clients', icon: Users },
+  { id: 'transactions', label: 'Transactions', icon: ArrowLeftRight },
+  { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+  { id: 'settings', label: 'Settings', icon: Settings },
+];
 
 export default function HomePage() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'properties' | 'clients' | 'transactions'>('dashboard');
+  const [activeTab, setActiveTab] = useState<Tab>('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutGrid },
-    { id: 'properties', label: 'Properties', icon: Building2 },
-    { id: 'clients', label: 'Clients', icon: Users },
-    { id: 'transactions', label: 'Transactions', icon: TrendingUp },
-  ];
-
-  const styles = {
-    container: {
-      display: 'flex',
-      height: '100vh',
-      backgroundColor: '#0f1729',
-      color: '#e2e8f0',
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-    },
-    sidebar: {
-      width: sidebarOpen ? '18rem' : '0',
-      backgroundColor: '#020617',
-      borderRight: '1px solid rgba(71, 85, 105, 0.5)',
-      transition: 'width 0.3s ease',
-      overflow: 'hidden',
-      display: 'flex',
-      flexDirection: 'column',
-      position: 'fixed' as const,
-      height: '100%',
-      left: 0,
-      top: 0,
-      zIndex: 50,
-    } as any,
-    sidebarContent: {
-      flex: 1,
-      display: 'flex',
-      flexDirection: 'column',
-    },
-    logo: {
-      padding: '1.5rem',
-      borderBottom: '1px solid rgba(71, 85, 105, 0.5)',
-      backgroundColor: 'rgba(30, 41, 59, 0.5)',
-      display: 'flex',
-      gap: '0.75rem',
-      alignItems: 'center',
-    },
-    logoIcon: {
-      width: '3rem',
-      height: '3rem',
-      borderRadius: '0.5rem',
-      background: 'linear-gradient(to bottom right, #3b82f6, #06b6d4, #2563eb)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      boxShadow: '0 0 20px rgba(59, 130, 246, 0.2)',
-    },
-    nav: {
-      flex: 1,
-      padding: '1rem',
-      space: '0.5rem',
-      overflowY: 'auto' as const,
-    },
-    navItem: (isActive: boolean) => ({
-      width: '100%',
-      display: 'flex',
-      gap: '0.75rem',
-      padding: '0.75rem 1rem',
-      borderRadius: '0.5rem',
-      transition: 'all 0.2s',
-      cursor: 'pointer',
-      marginBottom: '0.5rem',
-      backgroundColor: isActive ? 'rgba(59, 130, 246, 0.2)' : 'transparent',
-      color: isActive ? '#ffffff' : '#9ca3af',
-      border: isActive ? '1px solid rgba(59, 130, 246, 0.3)' : '1px solid transparent',
-    } as any),
-    mainContent: {
-      flex: 1,
-      marginLeft: sidebarOpen ? '18rem' : '0',
-      display: 'flex',
-      flexDirection: 'column',
-      transition: 'margin-left 0.3s ease',
-    } as any,
-    topBar: {
-      backgroundColor: 'rgba(30, 41, 59, 0.8)',
-      borderBottom: '1px solid rgba(71, 85, 105, 0.5)',
-      padding: '1.5rem',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      backdropFilter: 'blur(12px)',
-      position: 'sticky' as const,
-      top: 0,
-      zIndex: 40,
-    },
-    contentArea: {
-      flex: 1,
-      overflowY: 'auto' as const,
-      padding: '1.5rem',
-    },
-    footer: {
-      backgroundColor: 'rgba(15, 23, 42, 0.95)',
-      borderTop: '1px solid rgba(71, 85, 105, 0.5)',
-      padding: '1rem',
-      textAlign: 'center' as const,
-      fontSize: '0.875rem',
-      color: '#6b7280',
-    },
-  };
+  const currentNav = navItems.find((n) => n.id === activeTab)!;
 
   return (
-    <div style={styles.container}>
-      {/* Sidebar */}
-      <div style={styles.sidebar}>
-        {/* Logo */}
-        <div style={styles.logo}>
-          <div style={styles.logoIcon}>
-            <Building2 size={24} color="white" />
+    <ToastProvider>
+      <div className="flex h-screen overflow-hidden bg-[#050508]">
+        {/* ── Sidebar ── */}
+        <aside
+          className={`
+            fixed inset-y-0 left-0 z-50 flex flex-col
+            border-r border-white/[0.04] bg-[#08080f]/95 backdrop-blur-xl
+            transition-all duration-300 ease-in-out
+            ${sidebarOpen ? 'w-64' : 'w-[72px]'}
+            max-lg:${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
+            lg:translate-x-0
+          `}
+        >
+          {/* Logo */}
+          <div className={`flex items-center gap-3 px-5 h-16 border-b border-white/[0.04] shrink-0`}>
+            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#00d4ff] to-[#7c3aed] flex items-center justify-center shrink-0 neon-glow-blue">
+              <Building2 size={18} className="text-white" />
+            </div>
+            {sidebarOpen && (
+              <div className="overflow-hidden">
+                <div className="text-[15px] font-bold text-white tracking-tight">R&A Estate</div>
+                <div className="text-[10px] text-white/30 tracking-widest uppercase">Kuwait</div>
+              </div>
+            )}
           </div>
-          <div>
-            <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#ffffff' }}>R&A Estate</div>
-            <div style={{ fontSize: '0.75rem', color: '#9ca3af', marginTop: '0.25rem' }}>Kuwait Real Estate</div>
-          </div>
-        </div>
 
-        {/* Navigation */}
-        <nav style={{ ...styles.nav, display: 'flex', flexDirection: 'column' }}>
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeTab === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => {
-                  setActiveTab(item.id as any);
-                  setSidebarOpen(false);
-                }}
-                style={styles.navItem(isActive)}
-              >
-                <Icon size={20} />
-                <span style={{ fontWeight: 500 }}>{item.label}</span>
-              </button>
-            );
-          })}
-        </nav>
+          {/* Nav */}
+          <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeTab === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => { setActiveTab(item.id); setMobileMenuOpen(false); }}
+                  className={`
+                    w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium
+                    transition-all duration-200 group relative
+                    ${isActive
+                      ? 'bg-gradient-to-r from-[#00d4ff]/10 to-[#7c3aed]/10 text-white border border-[#00d4ff]/15'
+                      : 'text-white/40 hover:text-white/70 hover:bg-white/[0.03] border border-transparent'}
+                  `}
+                >
+                  {isActive && (
+                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-gradient-to-b from-[#00d4ff] to-[#7c3aed]" />
+                  )}
+                  <Icon size={18} className={isActive ? 'text-[#00d4ff]' : 'text-white/30 group-hover:text-white/50'} />
+                  {sidebarOpen && <span>{item.label}</span>}
+                </button>
+              );
+            })}
+          </nav>
 
-        {/* Footer */}
-        <div style={{ padding: '1rem', borderTop: '1px solid rgba(71, 85, 105, 0.5)', backgroundColor: 'rgba(30, 41, 59, 0.5)' }}>
-          <button
-            style={{
-              width: '100%',
-              display: 'flex',
-              gap: '0.75rem',
-              padding: '0.75rem 1rem',
-              borderRadius: '0.5rem',
-              backgroundColor: 'transparent',
-              color: '#9ca3af',
-              border: 'none',
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = '#ffffff';
-              e.currentTarget.style.backgroundColor = 'rgba(71, 85, 105, 0.3)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = '#9ca3af';
-              e.currentTarget.style.backgroundColor = 'transparent';
-            }}
-          >
-            <LogOut size={20} />
-            <span style={{ fontWeight: 500 }}>Logout</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div style={styles.mainContent}>
-        {/* Top Bar */}
-        <div style={styles.topBar}>
-          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          {/* Sidebar Footer */}
+          <div className="px-3 py-4 border-t border-white/[0.04] space-y-2">
+            {sidebarOpen && (
+              <div className="flex items-center gap-3 px-3 py-2">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#00d4ff] to-[#a855f7] flex items-center justify-center text-xs font-bold text-white">
+                  RA
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-medium text-white truncate">R&A Admin</div>
+                  <div className="text-[11px] text-white/30">Enterprise Plan</div>
+                </div>
+              </div>
+            )}
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              style={{ background: 'none', border: 'none', color: '#e2e8f0', cursor: 'pointer', padding: '0.5rem' }}
+              className="hidden lg:flex w-full items-center gap-3 px-3 py-2 rounded-xl text-white/30 hover:text-white/50 hover:bg-white/[0.03] transition-all text-sm"
             >
-              {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
+              <ChevronLeft size={18} className={`transition-transform duration-300 ${!sidebarOpen ? 'rotate-180' : ''}`} />
+              {sidebarOpen && <span>Collapse</span>}
             </button>
-            <div>
-              <div style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#ffffff' }}>
-                {navItems.find((i) => i.id === activeTab)?.label}
+          </div>
+        </aside>
+
+        {/* Mobile overlay */}
+        {mobileMenuOpen && (
+          <div className="fixed inset-0 bg-black/60 z-40 lg:hidden" onClick={() => setMobileMenuOpen(false)} />
+        )}
+
+        {/* ── Main ── */}
+        <main className={`flex-1 flex flex-col min-h-screen transition-all duration-300 ${sidebarOpen ? 'lg:pl-64' : 'lg:pl-[72px]'}`}>
+          {/* Top Bar */}
+          <header className="sticky top-0 z-30 flex items-center justify-between h-16 px-6 border-b border-white/[0.04] bg-[#050508]/80 backdrop-blur-xl shrink-0">
+            <div className="flex items-center gap-4">
+              <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden text-white/40 hover:text-white/70">
+                <Menu size={22} />
+              </button>
+              <div>
+                <h1 className="text-lg font-semibold text-white">{currentNav.label}</h1>
+                <p className="text-[11px] text-white/25 hidden sm:block">R&A General Trading Co.</p>
               </div>
-              <p style={{ fontSize: '0.875rem', color: '#9ca3af', marginTop: '0.25rem' }}>Manage your real estate business</p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              {/* Search */}
+              <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.06] text-white/30 text-sm w-56">
+                <Search size={14} />
+                <span>Search...</span>
+                <span className="ml-auto text-[10px] bg-white/[0.06] px-1.5 py-0.5 rounded">⌘K</span>
+              </div>
+
+              {/* Notifications */}
+              <button className="relative p-2 rounded-lg hover:bg-white/[0.04] transition-colors text-white/40 hover:text-white/60">
+                <Bell size={18} />
+                <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#00d4ff] pulse-neon" />
+              </button>
+
+              {/* Avatar */}
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#00d4ff] to-[#a855f7] flex items-center justify-center text-xs font-bold text-white cursor-pointer">
+                RA
+              </div>
+            </div>
+          </header>
+
+          {/* Content */}
+          <div className="flex-1 overflow-y-auto p-6">
+            <div className="animate-fade-in">
+              {activeTab === 'dashboard' && <Dashboard />}
+              {activeTab === 'properties' && <PropertyManager />}
+              {activeTab === 'clients' && <ClientManager />}
+              {activeTab === 'transactions' && <TransactionManager />}
+              {activeTab === 'analytics' && <Analytics />}
+              {activeTab === 'settings' && <SettingsPage />}
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-            <div style={{ textAlign: 'right', display: 'none' }}>
-              <p style={{ fontSize: '0.875rem', color: '#9ca3af' }}>Signed in as</p>
-              <p style={{ fontSize: '0.875rem', fontWeight: 600, color: '#ffffff' }}>R&A Admin</p>
-            </div>
-            <div
-              style={{
-                width: '2.5rem',
-                height: '2.5rem',
-                borderRadius: '9999px',
-                background: 'linear-gradient(to bottom right, #3b82f6, #06b6d4)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 'bold',
-                color: 'white',
-              }}
-            >
-              A
-            </div>
-          </div>
-        </div>
+          {/* Footer */}
+          <footer className="shrink-0 px-6 py-3 border-t border-white/[0.04] text-center text-[11px] text-white/15">
+            © 2026 R&A General Trading Co. — Enterprise Real Estate Management — Kuwait
+          </footer>
+        </main>
+      </div>
+    </ToastProvider>
+  );
+}
 
-        {/* Content Area */}
-        <div style={styles.contentArea}>
-          {activeTab === 'dashboard' && <Dashboard />}
-          {activeTab === 'properties' && <PropertyManager />}
-          {activeTab === 'clients' && <ClientManager />}
-          {activeTab === 'transactions' && <TransactionManager />}
+// ── Settings placeholder ──
+function SettingsPage() {
+  return (
+    <div className="space-y-6">
+      <div className="glass-card p-8 text-center">
+        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#00d4ff]/20 to-[#7c3aed]/20 border border-[#00d4ff]/10 flex items-center justify-center mx-auto mb-4">
+          <Shield size={28} className="text-[#00d4ff]" />
         </div>
-
-        {/* Footer */}
-        <div style={styles.footer}>
-          <p>© 2026 R&A General Trading Co. | Real Estate Management System | Kuwait</p>
+        <h2 className="text-xl font-semibold text-white mb-2">System Settings</h2>
+        <p className="text-white/30 text-sm max-w-md mx-auto">
+          Company configuration, user management, commission rates, and system preferences.
+          Available in the full production release.
+        </p>
+        <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/[0.03] border border-white/[0.06] text-white/40 text-sm">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 pulse-neon" />
+          Demo Mode Active
         </div>
       </div>
-
-      {/* Mobile Overlay */}
-      {sidebarOpen && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            zIndex: 40,
-            display: 'none',
-          }}
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
     </div>
   );
 }
